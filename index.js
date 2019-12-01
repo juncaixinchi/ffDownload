@@ -28,6 +28,8 @@ app.get('/', (req, res) => {
     downloadAndSend(req.query.url)
       .then(r => res.redirect(r))
       .catch(e => res.send(e.toString()))
+  } else {
+    res.send('hello world')
   }
 })
 
