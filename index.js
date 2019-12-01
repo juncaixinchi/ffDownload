@@ -12,18 +12,22 @@ const app = express()
 app.use(morgan('combined'))
 
 const downloadAndSend = async (url) => {
-  const filename = path.parse(url).base || 'targetFile'
-  console.log(filename)
+  const compo = path.parse(encodeURI(url))
+  const filename = compo.ext ? compo.base : 'targetFile'
   const filePath = `./tmpdata/${filename}`
-  await exec(`wget -O ${filePath} ${url}`)
-  const result = await exec(`ffsend ${filePath}`).toString()
-  return result
+  await exec(`wget -O ${filePath} '${encodeURI(url)}'`)
+  const { stdout, stderr } = await exec(`ffsend -q upload ${filePath}`)
+  if (stderr) throw stderr
+  console.log(stdout)
+  return stdout.trim()
 }
 
 app.get('/', (req, res) => {
   if (req && req.query && req.query.url) {
     console.log('will download', req.query.url)
-    downloadAndSend(req.query.url).then(r => res.send(r)).catch(e => res.send(e.toString()))
+    downloadAndSend(req.query.url)
+      .then(r => res.redirect(r))
+      .catch(e => res.send(e.toString()))
   }
 })
 
