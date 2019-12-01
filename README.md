@@ -1,2 +1,2 @@
 # ffDownload
-Remote dwonloader with Firefox Send
+Remote downloader with Firefox Send
