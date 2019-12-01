@@ -11,15 +11,15 @@ const downloadAndSend = async (url) => {
   const filename = path.parse(url).base || 'targetFile'
   console.log(filename)
   const filePath = `./tmpdata/${filename}`
-  await child.spawn(`wget -O ${filePath} ${req.query.url}`)
+  await child.spawn(`wget -O ${filePath} ${url}`)
   const result = await child.spawn(`ffsend ${filePath}`)
   return result
 }
 
 app.get('/', (req, res) => {
-  console.log(req.query)
   if (req.query && req.query.url) {
-    downloadAndSend(req.query.url).then(res.send).catch(res.send)
+    console.log('will download', req.query.url)
+    downloadAndSend(req.query.url).then((r) => res.send(r.toString())).catch((e) => res.send(e.toString()))
   }
 })
 
