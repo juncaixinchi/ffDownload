@@ -11,20 +11,20 @@ const downloadAndSend = async (url) => {
   const filename = path.parse(url).base || 'targetFile'
   console.log(filename)
   const filePath = `./tmpdata/${filename}`
-  await child.spawn(`wget -O ${filePath} ${url}`)
-  const result = await child.spawn(`ffsend ${filePath}`)
+  await child.excec(`wget -O ${filePath} ${url}`)
+  const result = await child.excec(`ffsend ${filePath}`).toString()
   return result
 }
 
 app.get('/', (req, res) => {
   if (req.query && req.query.url) {
     console.log('will download', req.query.url)
-    downloadAndSend(req.query.url).then((r) => res.send(r.toString())).catch((e) => res.send(e.toString()))
+    downloadAndSend(req.query.url).then(res.send).catch(e => res.send(e.toString()))
   }
 })
 
-child.spawnSync(`rm -rf tmpdata`)
-child.spawnSync(`mkdir -p tmpdata`)
+child.execSync('rm -rf ./tmpdata')
+child.execSync('mkdir -p ./tmpdata')
 
 const server = app.listen(port, () => {
   console.log(`server start on http://localhost:${port}`)
