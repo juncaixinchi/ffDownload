@@ -2,8 +2,12 @@ const path = require('path')
 const express = require('express')
 const morgan = require('morgan')
 const child = require('child_process')
+const util = require('util')
 
-const port = 3000 // need sudo
+const exec = util.promisify(child.exec)
+
+const port = 3000
+
 const app = express()
 app.use(morgan('combined'))
 
@@ -11,15 +15,15 @@ const downloadAndSend = async (url) => {
   const filename = path.parse(url).base || 'targetFile'
   console.log(filename)
   const filePath = `./tmpdata/${filename}`
-  await child.excec(`wget -O ${filePath} ${url}`)
-  const result = await child.excec(`ffsend ${filePath}`).toString()
+  await exec(`wget -O ${filePath} ${url}`)
+  const result = await exec(`ffsend ${filePath}`).toString()
   return result
 }
 
 app.get('/', (req, res) => {
-  if (req.query && req.query.url) {
+  if (req && req.query && req.query.url) {
     console.log('will download', req.query.url)
-    downloadAndSend(req.query.url).then(res.send).catch(e => res.send(e.toString()))
+    downloadAndSend(req.query.url).then(r => res.send(r)).catch(e => res.send(e.toString()))
   }
 })
 
