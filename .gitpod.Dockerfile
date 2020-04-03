@@ -1,6 +1,5 @@
 FROM gitpod/workspace-full
 
-RUN brew install openssl@1.1
 RUN brew install ffsend
 
 USER gitpod

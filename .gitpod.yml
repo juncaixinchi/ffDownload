@@ -1,5 +1,5 @@
 tasks:
   - init: yarn install
-    command: nohup node index.js &
+    command: node index.js
 image:
   file: .gitpod.Dockerfile
